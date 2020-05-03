@@ -1,2 +1,5 @@
 heroku:
   client_secret: ""
+mq:
+  client_id: ""
+  client_secret: ""
