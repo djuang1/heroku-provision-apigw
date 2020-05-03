@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
 	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
@@ -8,10 +9,10 @@
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:os="http://www.mulesoft.org/schema/mule/os"
 	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd">
+http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<http:listener-config
 		name="heroku-provisioning-api-httpListenerConfig">
 		<http:listener-connection host="0.0.0.0"
@@ -181,6 +182,21 @@ output application/json
 					</ee:variables>
 				</ee:transform>
 			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="099c466e-edfe-424e-8906-bfded566115a" type="APP:MISSING_OPTIONS">
+				<ee:transform doc:name="Transform Message" doc:id="87206e5f-1cfb-41ac-b433-2f9a88574a2e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[422]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
 		</error-handler>
 	</flow>
 	<flow name="heroku-provisioning-api-console">
@@ -224,6 +240,17 @@ output application/json
 			doc:id="d27e8ce1-8c1d-4294-be33-8456a939aa9d" message="#[payload]" />
 		<set-variable value="#[payload.uuid]" doc:name="uuid"
 			doc:id="3d7d5cd8-7df9-4ffb-90b4-59bc20fa83a6" variableName="uuid" />
+		<try doc:name="Try" doc:id="85302fb0-bd2f-4b01-8c94-d8c8e7512faa" >
+			<validation:is-not-blank-string doc:name="apuser not blank" doc:id="218f98e0-1f5a-4718-aea5-dd92b266106b" value="#[payload.options.apuser]"/>
+			<validation:is-not-blank-string doc:name="appwd not blank" doc:id="4edf95ad-f015-469e-95e9-6d9d79f10400" value="#[payload.options.appwd]"/>
+			<validation:is-not-blank-string doc:name="apenvname not blank" doc:id="724ec3e8-e953-4298-bbf7-ad1e60069384" value="#[payload.options.apenvname]"/>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="58d83ee1-08db-4216-9216-465c4e757a37" >
+					<logger level="INFO" doc:name="Logger" doc:id="8e6d0ed1-5ef6-480c-839c-f43e8326fd0d" message="#[payload]"/>
+					<raise-error doc:name="Raise error" doc:id="11540bf4-bc15-4989-b271-afc422713b7d" type="APP:MISSING_OPTIONS" description="Options are missing for add-on e.g. --apuser=&lt;username&gt; --appwd=&lt;password&gt; --apenvname=&lt;environment&gt;"/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
 		<set-variable value="#[payload.options]"
 			doc:name="ap_credentials"
 			doc:id="d9799468-62c5-446d-9e13-b07dfee94ab1"
