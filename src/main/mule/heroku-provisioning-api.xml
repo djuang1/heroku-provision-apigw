@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     <http:listener-config name="heroku-provisioning-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8082" protocol="HTTPS">
             <tls:context>
@@ -140,6 +141,21 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b7c0328f-cf88-4dfa-b537-60c29056d5a3" type="APP:NOT_ALLOWED">
+				<ee:transform doc:name="Transform Message" doc:id="58c947ba-a4e0-4fda-a8bd-612335851294" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[403]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
         </error-handler>
     </flow>
     <flow name="heroku-provisioning-api-console">
@@ -490,24 +506,34 @@ output application/json
 		<set-payload value="#[output application/java --- payload]" doc:name="Set Payload" doc:id="53acb05e-e152-44f9-92b5-8359b0bec025" />
 		<ee:transform doc:name="Transform Message" doc:id="8a5c5eab-7530-4de4-9c95-38396d775688" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-import dw::Crypto
-output application/json
-
-var resource_id = payload.resource_id default ""
-var timestamp = payload.timestamp default ""
-
----
-{ "token" : Crypto::SHA1((resource_id ++ ':' ++ p('heroku.sso_salt') ++ ':' ++ timestamp) as Binary) }
-]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="uuid" ><![CDATA[%dw 2.0
 output application/java
 ---
 payload.resource_id default ""]]></ee:set-variable>
+				<ee:set-variable variableName="token" ><![CDATA[%dw 2.0
+import dw::Crypto
+output application/java
+
+var resource_id = payload.resource_id default ""
+var req_timestamp = payload.timestamp default ""
+
+---
+{
+	token: Crypto::SHA1((resource_id ++ ':' ++ p('heroku.sso_salt') ++ ':' ++ req_timestamp) as Binary)
+}]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<try doc:name="Try" doc:id="ef0b8f90-c026-4622-b7ef-a50f888e143a" >
+			<validation:is-true doc:name="Is true" doc:id="83dc0f7e-b100-4627-a957-950000e1d1d5" message="#[vars.token.token == payload.token]" expression="true"/>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="96356b6f-d9a0-42ec-85d2-da10becda030" >
+					<logger level="INFO" doc:name="Logger" doc:id="198b6895-8f64-4dca-82b7-a26018347bfd" message="#[payload]"/>
+					<raise-error doc:name="Raise error" doc:id="c8fd7991-e28b-4870-8763-e3318fcf1c80" type="APP:NOT_ALLOWED" description="User is not allowed to access page. Please contact MuleSoft support for assistance."/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
 		<os:retrieve doc:name="Retrieve" doc:id="b709cf20-9cc1-4383-ab8d-d3873af34363" key="#[vars.uuid]">
 			<os:default-value ><![CDATA[{}]]></os:default-value>
 		</os:retrieve>
