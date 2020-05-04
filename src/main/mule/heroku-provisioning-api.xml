@@ -562,18 +562,9 @@ output application/json
 		
 		<set-variable value='#[{ "Location":"https://anypoint.mulesoft.com/home" }]' doc:name="Set Variable" doc:id="58927054-596a-4ff0-a0dd-7ed29a62c039" variableName="outboundHeaders"/>
 		<set-variable value="302" doc:name="Set Variable" doc:id="6b729c9a-af72-432b-884f-00e1e5535f26" variableName="httpStatus" />
-		<logger level="INFO" doc:name="Logger" doc:id="788595a8-340d-4032-86b6-2b438f57d32a" message="#[payload]"/>
     </flow>
-	<flow name="heroku-provisioning-apiFlow1" doc:id="bb9a1607-7b58-499a-b67b-63c39ca7369c" >
-		<http:listener doc:name="Listener" doc:id="6c2ab46b-19c1-40f8-83ca-0754060d271e" config-ref="heroku-provisioning-api-httpListenerConfig" path="/store"/>
-		<os:store doc:name="Store" doc:id="d55b9e97-2e6e-4cb9-a3c0-7f58072c920e" key="#[attributes.queryParams.uuid]">
-			<os:value ><![CDATA[#[output application/json
----
-payload]]]></os:value>
-		</os:store>
-	</flow>
 	<flow name="heroku-provisioning-apiFlow2" doc:id="e4bff908-8bed-46c8-8d95-b80adec75701" >
-		<http:listener doc:name="Listener" doc:id="178845f4-28e3-45ba-88d1-977a4c072220" config-ref="heroku-provisioning-api-httpListenerConfig" path="/redirect"/>
+		<http:listener doc:name="/redirect" doc:id="178845f4-28e3-45ba-88d1-977a4c072220" config-ref="heroku-provisioning-api-httpListenerConfig" path="/redirect"/>
 		<logger level="INFO" doc:name="Logger" doc:id="9091f7d4-31af-4a27-a168-7e747d91aad8" message='#["Goodbye!"]'/>
 	</flow>
 </mule>
