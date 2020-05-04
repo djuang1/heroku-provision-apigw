@@ -1,472 +1,350 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule
-	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
-	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:os="http://www.mulesoft.org/schema/mule/os"
-	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
-http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
-	<http:listener-config
-		name="heroku-provisioning-api-httpListenerConfig">
-		<http:listener-connection host="0.0.0.0"
-			port="8082" protocol="HTTPS">
-			<tls:context>
-				<tls:key-store type="jks" path="keystore.jks"
-					alias="mule" keyPassword="password" password="password" />
-			</tls:context>
-		</http:listener-connection>
-	</http:listener-config>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+    <http:listener-config name="heroku-provisioning-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8082" protocol="HTTPS">
+            <tls:context>
+                <tls:key-store type="jks" path="keystore.jks" alias="mule" keyPassword="password" password="password" />
+            </tls:context>
+        </http:listener-connection>
+    </http:listener-config>
+    <http:request-config name="Anypoint_HTTP_Request" doc:name="HTTP Request configuration" doc:id="3a3069d0-49fb-4a2d-9010-c6c9e36b57b1" enableCookies="false">
+        <http:request-connection protocol="HTTPS" host="anypoint.mulesoft.com" port="443">
+            <tls:context>
+                <tls:key-store type="jks" path="keystore.jks" keyPassword="password" password="password" />
+            </tls:context>
+        </http:request-connection>
+    </http:request-config>
+    
+    <apikit:config name="heroku-provisioning-api-config" api="resource::b85b361d-0842-4b70-af37-2723c2c3ae7e:heroku-provisioning-api:1.0.7:raml:zip:heroku-provisioning-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" disableValidations="true"/>
+    <configuration-properties doc:name="Configuration properties" doc:id="03ec822b-978e-4457-b9d8-fdac23a2bff9" file="mule-properties.yaml" />
+    <http:request-config name="Grant_Code_HTTP_Request" doc:name="HTTP Request configuration" doc:id="d103b80b-4970-40a7-ab45-19ea1e0c4a13">
+        <http:request-connection protocol="HTTPS" host="id.heroku.com" port="443" />
+    </http:request-config>
+    <http:request-config name="API_Heroku_HTTP_Request" doc:name="HTTP Request configuration" doc:id="6a21da04-4ff1-476c-92bc-3ff872789345">
+        <http:request-connection protocol="HTTPS" host="api.heroku.com" port="443" />
+    </http:request-config>
 
-	<http:request-config name="Anypoint_HTTP_Request"
-		doc:name="HTTP Request configuration"
-		doc:id="3a3069d0-49fb-4a2d-9010-c6c9e36b57b1" enableCookies="false">
-		<http:request-connection protocol="HTTPS"
-			host="anypoint.mulesoft.com" port="443">
+    <anypoint-mq:config name="Anypoint_MQ_Config" doc:name="Anypoint MQ Config" doc:id="84b2c7c9-295e-4160-820b-12cad6accdbb">
+        <anypoint-mq:connection clientId="${mq.client_id}" clientSecret="${mq.client_secret}" />
+    </anypoint-mq:config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="864cd99a-d11a-4865-806b-95423196d6d5" >
+		<http:request-connection protocol="HTTPS" host="localhost" port="8082" >
 			<tls:context>
-				<tls:key-store type="jks" path="keystore.jks"
-					keyPassword="password" password="password" />
-			</tls:context>
+                <tls:trust-store insecure="true" />
+				<tls:key-store type="jks" path="keystore.jks" keyPassword="password" password="password" />
+            </tls:context>
 		</http:request-connection>
 	</http:request-config>
-
-	<apikit:config name="heroku-provisioning-api-config"
-		api="resource::b85b361d-0842-4b70-af37-2723c2c3ae7e:heroku-provisioning-api:1.0.6:raml:zip:heroku-provisioning-api.raml"
-		outboundHeadersMapName="outboundHeaders"
-		httpStatusVarName="httpStatus" disableValidations="true" />
-	<configuration-properties
-		doc:name="Configuration properties"
-		doc:id="03ec822b-978e-4457-b9d8-fdac23a2bff9"
-		file="mule-properties.yaml" />
-
-	<http:request-config name="Grant_Code_HTTP_Request"
-		doc:name="HTTP Request configuration"
-		doc:id="d103b80b-4970-40a7-ab45-19ea1e0c4a13">
-		<http:request-connection protocol="HTTPS"
-			host="id.heroku.com" port="443" />
-	</http:request-config>
-
-	<http:request-config name="API_Heroku_HTTP_Request"
-		doc:name="HTTP Request configuration"
-		doc:id="6a21da04-4ff1-476c-92bc-3ff872789345">
-		<http:request-connection protocol="HTTPS"
-			host="api.heroku.com" port="443" />
-	</http:request-config>
-
-	<http:listener-config name="HTTP_Listener_config"
-		doc:name="HTTP Listener config"
-		doc:id="a8658c6f-9129-4e8b-81f3-23baec6f86a7">
-		<http:listener-connection host="0.0.0.0"
-			port="8081" />
-	</http:listener-config>
-	<anypoint-mq:config name="Anypoint_MQ_Config" doc:name="Anypoint MQ Config" doc:id="84b2c7c9-295e-4160-820b-12cad6accdbb" >
-		<anypoint-mq:connection clientId="${mq.client_id}" clientSecret="${mq.client_secret}" />
-	</anypoint-mq:config>
 	<flow name="heroku-provisioning-api-main">
-		<http:listener
-			config-ref="heroku-provisioning-api-httpListenerConfig" path="/*">
-			<http:response
-				statusCode="#[vars.httpStatus default 200]">
-				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
-			</http:response>
-			<http:error-response
-				statusCode="#[vars.httpStatus default 500]">
-				<http:body>#[payload]</http:body>
-				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
-			</http:error-response>
-		</http:listener>
-		<apikit:router
-			config-ref="heroku-provisioning-api-config" />
-		<error-handler>
-			<on-error-propagate type="APIKIT:BAD_REQUEST">
-				<ee:transform
-					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+        <http:listener config-ref="heroku-provisioning-api-httpListenerConfig" path="/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="heroku-provisioning-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Bad request"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">400
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate type="APIKIT:NOT_FOUND">
-				<ee:transform
-					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">404
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate
-				type="APIKIT:METHOD_NOT_ALLOWED">
-				<ee:transform
-					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Method not allowed"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">405
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-				<ee:transform
-					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not acceptable"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">406
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate
-				type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-				<ee:transform
-					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Unsupported media type"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">415
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-				<ee:transform
-					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not Implemented"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">501
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="099c466e-edfe-424e-8906-bfded566115a" type="APP:MISSING_OPTIONS">
-				<ee:transform doc:name="Transform Message" doc:id="87206e5f-1cfb-41ac-b433-2f9a88574a2e" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="099c466e-edfe-424e-8906-bfded566115a" type="APP:MISSING_OPTIONS">
+                <ee:transform doc:name="Transform Message" doc:id="87206e5f-1cfb-41ac-b433-2f9a88574a2e">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	message: error.description
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[422]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
-	</flow>
-	<flow name="heroku-provisioning-api-console">
-		<http:listener
-			config-ref="heroku-provisioning-api-httpListenerConfig"
-			path="/console/*">
-			<http:response
-				statusCode="#[vars.httpStatus default 200]">
-				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
-			</http:response>
-			<http:error-response
-				statusCode="#[vars.httpStatus default 500]">
-				<http:body>#[payload]</http:body>
-				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
-			</http:error-response>
-		</http:listener>
-		<apikit:console
-			config-ref="heroku-provisioning-api-config" />
-		<error-handler>
-			<on-error-propagate type="APIKIT:NOT_FOUND">
-				<ee:transform
-					xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-					xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[422]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="heroku-provisioning-api-console">
+        <http:listener config-ref="heroku-provisioning-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="heroku-provisioning-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">404
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
-	</flow>
-	<flow
-		name="post:\heroku\resources:application\json:heroku-provisioning-api-config">
-		<logger level="INFO" doc:name="Logger"
-			doc:id="d27e8ce1-8c1d-4294-be33-8456a939aa9d" message="#[payload]" />
-		<set-variable value="#[payload.uuid]" doc:name="uuid"
-			doc:id="3d7d5cd8-7df9-4ffb-90b4-59bc20fa83a6" variableName="uuid" />
-		<try doc:name="Try" doc:id="85302fb0-bd2f-4b01-8c94-d8c8e7512faa" >
-			<validation:is-not-blank-string doc:name="apuser not blank" doc:id="218f98e0-1f5a-4718-aea5-dd92b266106b" value="#[payload.options.apuser]"/>
-			<validation:is-not-blank-string doc:name="appwd not blank" doc:id="4edf95ad-f015-469e-95e9-6d9d79f10400" value="#[payload.options.appwd]"/>
-			<validation:is-not-blank-string doc:name="apenvname not blank" doc:id="724ec3e8-e953-4298-bbf7-ad1e60069384" value="#[payload.options.apenvname]"/>
-			<error-handler >
-				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="58d83ee1-08db-4216-9216-465c4e757a37" >
-					<logger level="INFO" doc:name="Logger" doc:id="8e6d0ed1-5ef6-480c-839c-f43e8326fd0d" message="#[payload]"/>
-					<raise-error doc:name="Raise error" doc:id="11540bf4-bc15-4989-b271-afc422713b7d" type="APP:MISSING_OPTIONS" description="Options are missing for add-on e.g. --apuser=&lt;username&gt; --appwd=&lt;password&gt; --apenvname=&lt;environment&gt;"/>
-				</on-error-propagate>
-			</error-handler>
-		</try>
-		<set-variable value="#[payload.options]"
-			doc:name="ap_credentials"
-			doc:id="d9799468-62c5-446d-9e13-b07dfee94ab1"
-			variableName="ap_credentials" />
-		<async doc:name="Async"
-			doc:id="c7cd6a89-f773-463a-8cd0-6be26f9fe1a8">
-			<http:request method="POST" doc:name="Grant Code"
-				doc:id="63488fd3-bde3-476f-aa47-e14e3edd83cf"
-				config-ref="Grant_Code_HTTP_Request" path="/oauth/token"
-				target="accessToken" targetValue="#[payload.access_token]">
-
-				<http:body><![CDATA[#[output application/x-www-form-urlencoded 
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="post:\heroku\resources:application\json:heroku-provisioning-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="d27e8ce1-8c1d-4294-be33-8456a939aa9d" message="#[payload]" />
+        <set-variable value="#[payload.uuid]" doc:name="uuid" doc:id="3d7d5cd8-7df9-4ffb-90b4-59bc20fa83a6" variableName="uuid" />
+        <try doc:name="Try" doc:id="85302fb0-bd2f-4b01-8c94-d8c8e7512faa">
+            <validation:is-not-blank-string doc:name="apuser not blank" doc:id="218f98e0-1f5a-4718-aea5-dd92b266106b" value="#[payload.options.apuser]" />
+            <validation:is-not-blank-string doc:name="appwd not blank" doc:id="4edf95ad-f015-469e-95e9-6d9d79f10400" value="#[payload.options.appwd]" />
+            <validation:is-not-blank-string doc:name="apenvname not blank" doc:id="724ec3e8-e953-4298-bbf7-ad1e60069384" value="#[payload.options.apenvname]" />
+            <error-handler>
+                <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="58d83ee1-08db-4216-9216-465c4e757a37">
+                    <logger level="INFO" doc:name="Logger" doc:id="8e6d0ed1-5ef6-480c-839c-f43e8326fd0d" message="#[payload]" />
+                    <raise-error doc:name="Raise error" doc:id="11540bf4-bc15-4989-b271-afc422713b7d" type="APP:MISSING_OPTIONS" description="Options are missing for add-on e.g. --apuser=&lt;username&gt; --appwd=&lt;password&gt; --apenvname=&lt;environment&gt;" />
+                </on-error-propagate>
+            </error-handler>
+        </try>
+        <set-variable value="#[payload.options]" doc:name="ap_credentials" doc:id="d9799468-62c5-446d-9e13-b07dfee94ab1" variableName="ap_credentials" />
+        <async doc:name="Async" doc:id="c7cd6a89-f773-463a-8cd0-6be26f9fe1a8">
+            <http:request method="POST" doc:name="Grant Code" doc:id="63488fd3-bde3-476f-aa47-e14e3edd83cf" config-ref="Grant_Code_HTTP_Request" path="/oauth/token" target="accessToken" targetValue="#[payload.access_token]">
+                <http:body><![CDATA[#[output application/x-www-form-urlencoded 
 --- 
 {	
 	client_secret : p('heroku.client_secret'), 	
 	grant_type : "authorization_code",	
 	code : payload.oauth_grant.code
 }]]]></http:body>
-				<http:headers><![CDATA[#[output application/java
+                <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Host" : "id.heroku.com"
 }]]]></http:headers>
-			</http:request>
-			<http:request method="GET" doc:name="App Info"
-				doc:id="21778486-a4e9-4b9e-a3e2-f3f005b2e3e2"
-				config-ref="API_Heroku_HTTP_Request" path="/addons/{uuid}"
-				target="app_id" targetValue="#[payload.app.id]">
-				<http:headers><![CDATA[#[output application/java
+            </http:request>
+            <http:request method="GET" doc:name="App Info" doc:id="21778486-a4e9-4b9e-a3e2-f3f005b2e3e2" config-ref="API_Heroku_HTTP_Request" path="/addons/{uuid}" target="app_id" targetValue="#[payload.app.id]">
+                <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.accessToken,
 	"Accept" : "application/vnd.heroku+json; version=3",
 	"Content-Type" : "application/json"
 }]]]></http:headers>
-				<http:uri-params><![CDATA[#[output application/java
+                <http:uri-params><![CDATA[#[output application/java
 ---
 {
 	"uuid" : vars.uuid
 }]]]></http:uri-params>
-			</http:request>
-			<http:request method="GET" doc:name="Hostname"
-				doc:id="a3524887-14a4-418a-9460-0497d491e618"
-				config-ref="API_Heroku_HTTP_Request" path="/apps/{app_id}/domains"
-				target="hostname" targetValue="#[payload[0].hostname]">
-				<http:headers><![CDATA[#[output application/java
+            </http:request>
+            <http:request method="GET" doc:name="Hostname" doc:id="a3524887-14a4-418a-9460-0497d491e618" config-ref="API_Heroku_HTTP_Request" path="/apps/{app_id}/domains" target="hostname" targetValue="#[payload[0].hostname]">
+                <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.accessToken,
 	"Accept" : "application/vnd.heroku+json; version=3",
 	"Content-Type" : "application/json"
 }]]]></http:headers>
-				<http:uri-params><![CDATA[#[output application/java
+                <http:uri-params><![CDATA[#[output application/java
 ---
 {
 	"app_id" : vars.app_id
 }]]]></http:uri-params>
-			</http:request>
-			<set-payload value='#[{
-	"provision": payload,
-	"hostname": vars.hostname,
-	"accessToken": vars.accessToken,
-	"app_id": vars.app_id,
-	"provisioned": false
-}]' doc:name="Set Payload" doc:id="15d6f67d-8a77-4564-b68a-5b02a583e2e5" />
-			<os:store doc:name="Store"
-				doc:id="35044cec-0361-4194-aef6-ab631b2bd253" key="#[vars.uuid]">
-			</os:store>
-			<anypoint-mq:publish doc:name="Publish" doc:id="a07c246c-5858-4bd9-8edc-ecf4ee69b9c6" config-ref="Anypoint_MQ_Config" destination="heroku-addons">
-				<anypoint-mq:properties ><![CDATA[#[output application/java
+            </http:request>
+            <set-payload value="#[{  &quot;provision&quot;: payload,  &quot;hostname&quot;: vars.hostname,  &quot;accessToken&quot;: vars.accessToken,  &quot;app_id&quot;: vars.app_id,  &quot;provisioned&quot;: false }]" doc:name="Set Payload" doc:id="15d6f67d-8a77-4564-b68a-5b02a583e2e5" />
+            <os:store doc:name="Store" doc:id="35044cec-0361-4194-aef6-ab631b2bd253" key="#[vars.uuid]" />
+            <anypoint-mq:publish doc:name="Publish" doc:id="a07c246c-5858-4bd9-8edc-ecf4ee69b9c6" config-ref="Anypoint_MQ_Config" destination="heroku-addons">
+                <anypoint-mq:properties><![CDATA[#[output application/java
 ---
 {
 	"uuid" : vars.uuid
 }]]]></anypoint-mq:properties>
-			</anypoint-mq:publish>
-		</async>
-		<ee:transform
-			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-			xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
+            </anypoint-mq:publish>
+        </async>
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
   id: vars.uuid,
   message: "Your add-on is being provisioned. It will be available shortly."
 }]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	<flow
-		name="put:\heroku\resources\(uuid):heroku-provisioning-api-config">
-		<ee:transform
-			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-			<ee:variables>
-				<ee:set-variable variableName="uuid">attributes.uriParams.'uuid'
-				</ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<ee:transform
-			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-			xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="put:\heroku\resources\(uuid):heroku-provisioning-api-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="uuid">attributes.uriParams.'uuid'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
   id: vars.uuid,
   message: "Unable to change plan."
 }]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	<flow
-		name="delete:\heroku\resources\(uuid):heroku-provisioning-api-config">
-		<ee:transform
-			xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-			<ee:variables>
-				<ee:set-variable variableName="uuid">attributes.uriParams.'uuid'
-				</ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<os:retrieve doc:name="Retrieve"
-			doc:id="3a3e46b6-22f6-445b-9028-2901a39555cf" key="#[vars.uuid]">
-			<os:default-value><![CDATA[{}]]></os:default-value>
-		</os:retrieve>
-		<async doc:name="Async"
-			doc:id="68ee717f-ddeb-400f-9539-f6d032166e1d">
-			<set-variable value="#[payload]" doc:name="Set Variable" doc:id="0aa6673a-238e-4fc8-81e2-fd06bbf83e37" variableName="provision_data"/>
-			<http:request method="POST"
-						doc:name="Anypoint - Get Access Token"
-						doc:id="5464fb13-e78d-4a07-a9ff-06e8bf309180"
-						config-ref="Anypoint_HTTP_Request" path="/accounts/login"
-						target="access_token" targetValue="#[payload.access_token]">
-						<http:body><![CDATA[#[%dw 2.0
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="delete:\heroku\resources\(uuid):heroku-provisioning-api-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="uuid">attributes.uriParams.'uuid'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <os:retrieve doc:name="Retrieve" doc:id="3a3e46b6-22f6-445b-9028-2901a39555cf" key="#[vars.uuid]">
+            <os:default-value><![CDATA[{}]]></os:default-value>
+        </os:retrieve>
+        <async doc:name="Async" doc:id="68ee717f-ddeb-400f-9539-f6d032166e1d">
+            <set-variable value="#[payload]" doc:name="Set Variable" doc:id="0aa6673a-238e-4fc8-81e2-fd06bbf83e37" variableName="provision_data" />
+            <http:request method="POST" doc:name="Anypoint - Get Access Token" doc:id="5464fb13-e78d-4a07-a9ff-06e8bf309180" config-ref="Anypoint_HTTP_Request" path="/accounts/login" target="access_token" targetValue="#[payload.access_token]">
+                <http:body><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
 	"username": payload.provision.options.apuser,
 	"password": payload.provision.options.appwd
 }]]]></http:body>
-						<http:headers><![CDATA[#[output application/java
+                <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Content-Type" : "application/json"
 }]]]></http:headers>
-					</http:request>
-			<http:request method="DELETE" doc:name="Anypoint - Delete App" doc:id="80c5eaac-9b4a-4a59-941a-2d7f36beb70b" config-ref="Anypoint_HTTP_Request" path='#["/cloudhub/api/v2/applications/" ++ ((vars.provision_data.hostname default "") splitBy(/[.\/]/))[0]]'>
-				<http:headers><![CDATA[#[output application/java
+            </http:request>
+            <http:request method="DELETE" doc:name="Anypoint - Delete App" doc:id="80c5eaac-9b4a-4a59-941a-2d7f36beb70b" config-ref="Anypoint_HTTP_Request" path="#[&quot;/cloudhub/api/v2/applications/&quot; ++ ((vars.provision_data.hostname default &quot;&quot;) splitBy(/[.\/]/))[0]]">
+                <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.access_token
 }]]]></http:headers>
-			</http:request>
-			<http:request method="DELETE" doc:name="Anypoint - Delete API" doc:id="bfdc98b3-7fc1-456a-8424-4d21ec3f7171" config-ref="Anypoint_HTTP_Request" path='#["/apimanager/api/v1/organizations/" ++ vars.provision_data.organizationId ++ "/environments/" ++ vars.provision_data.environmentId ++ "/apis/" ++ vars.provision_data.api_id]'>
-			<http:headers><![CDATA[#[output application/java
+            </http:request>
+            <http:request method="DELETE" doc:name="Anypoint - Delete API" doc:id="bfdc98b3-7fc1-456a-8424-4d21ec3f7171" config-ref="Anypoint_HTTP_Request" path="#[&quot;/apimanager/api/v1/organizations/&quot; ++ vars.provision_data.organizationId ++ &quot;/environments/&quot; ++ vars.provision_data.environmentId ++ &quot;/apis/&quot; ++ vars.provision_data.api_id]">
+                <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.access_token
 }]]]></http:headers>
-			</http:request>
-			<http:request method="DELETE" doc:name="Anypoint - Delete API" doc:id="cc2e88e0-e55d-4dea-969a-72362724d275" config-ref="Anypoint_HTTP_Request" path='#["/exchange/api/v1/organizations/" ++ vars.provision_data.organizationId ++ "/assets/" ++ vars.provision_data.organizationId ++ "/" ++ vars.provision_data.herokuAppId ++ "/1.0.0"]'>
-			<http:headers><![CDATA[#[output application/java
+            </http:request>
+            <http:request method="DELETE" doc:name="Anypoint - Delete API" doc:id="cc2e88e0-e55d-4dea-969a-72362724d275" config-ref="Anypoint_HTTP_Request" path="#[&quot;/exchange/api/v1/organizations/&quot; ++ vars.provision_data.organizationId ++ &quot;/assets/&quot; ++ vars.provision_data.organizationId ++ &quot;/&quot; ++ vars.provision_data.herokuAppId ++ &quot;/1.0.0&quot;]">
+                <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.access_token
 }]]]></http:headers>
-			</http:request>
-			
-			
-		</async>
-		<os:remove doc:name="Remove"
-			doc:id="dc6aad1b-ba8f-4dd0-82c1-ab07018dba73" key="#[vars.uuid]" />
-	</flow>
-	<flow name="heroku-provisioning-apiFlow"
-		doc:id="6747f616-853e-47cc-9398-137a4ef5133a">
-		<anypoint-mq:subscriber doc:name="Subscriber" doc:id="48914ca6-f631-4c43-888d-f3ee913208de" config-ref="Anypoint_MQ_Config" destination="heroku-addons" acknowledgementMode="IMMEDIATE"/>
-		<logger level="INFO" doc:name="Logger" doc:id="b1a8a587-9048-446a-8f95-4867ac43e7da" />
-		<set-variable value="#[payload]"
-						doc:name="provision_data"
-						doc:id="06e2e5fd-5069-42dd-920d-7b01c38c5a51"
-						variableName="provision_data" />
-		<http:request method="POST"
-						doc:name="Anypoint - Get Access Token"
-						doc:id="23a6f222-104f-49af-8f09-6a4fdbbece48"
-						config-ref="Anypoint_HTTP_Request" path="/accounts/login"
-						target="access_token" targetValue="#[payload.access_token]">
-						<http:body><![CDATA[#[%dw 2.0
+            </http:request>
+        </async>
+        <os:remove doc:name="Remove" doc:id="dc6aad1b-ba8f-4dd0-82c1-ab07018dba73" key="#[vars.uuid]" />
+    </flow>
+    <flow name="heroku-provisioning-apiFlow" doc:id="6747f616-853e-47cc-9398-137a4ef5133a">
+        <anypoint-mq:subscriber doc:name="Subscriber" doc:id="48914ca6-f631-4c43-888d-f3ee913208de" config-ref="Anypoint_MQ_Config" destination="heroku-addons" acknowledgementMode="IMMEDIATE" />
+        <logger level="INFO" doc:name="Logger" doc:id="b1a8a587-9048-446a-8f95-4867ac43e7da" />
+        <set-variable value="#[payload]" doc:name="provision_data" doc:id="06e2e5fd-5069-42dd-920d-7b01c38c5a51" variableName="provision_data" />
+        <http:request method="POST" doc:name="Anypoint - Get Access Token" doc:id="23a6f222-104f-49af-8f09-6a4fdbbece48" config-ref="Anypoint_HTTP_Request" path="/accounts/login" target="access_token" targetValue="#[payload.access_token]">
+            <http:body><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
 	"username": vars.provision_data.provision.options.apuser,
 	"password": vars.provision_data.provision.options.appwd
 }]]]></http:body>
-						<http:headers><![CDATA[#[output application/java
+            <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Content-Type" : "application/json"
 }]]]></http:headers>
-					</http:request>
-					<http:request method="GET"
-						doc:name="Anypoint - Get Org ID"
-						doc:id="2a477d94-f3f2-4f83-97dd-cd4c105ea315"
-						config-ref="Anypoint_HTTP_Request" path="/accounts/api/profile">
-						<http:headers><![CDATA[#[output application/java
+        </http:request>
+        <http:request method="GET" doc:name="Anypoint - Get Org ID" doc:id="2a477d94-f3f2-4f83-97dd-cd4c105ea315" config-ref="Anypoint_HTTP_Request" path="/accounts/api/profile">
+            <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.access_token,
 	"Content-Type" : "application/json"
 }]]]></http:headers>
-					</http:request>
-					<ee:transform doc:name="Transform Message" doc:id="b58b885c-90cf-43e9-be2c-c82f1edd8dc8" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+        </http:request>
+        <ee:transform doc:name="Transform Message" doc:id="b58b885c-90cf-43e9-be2c-c82f1edd8dc8">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 import * from dw::core::Binaries
 output multipart/form-data
 ---
@@ -509,27 +387,27 @@ output multipart/form-data
 		}
 	}
 }]]></ee:set-payload>
-			</ee:message>
-			<ee:variables >
-							<ee:set-variable variableName="organizationId" ><![CDATA[%dw 2.0
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable variableName="organizationId"><![CDATA[%dw 2.0
 output application/java
 ---
 payload.organizationId]]></ee:set-variable>
-							<ee:set-variable variableName="environmentId" ><![CDATA[%dw 2.0
+                <ee:set-variable variableName="environmentId"><![CDATA[%dw 2.0
 output application/java
 ---
 (payload.organization.environments filter (value, index) -> (value.name == vars.provision_data.provision.options.apenvname))[0].id]]></ee:set-variable>
-						</ee:variables>
-		</ee:transform>
-					<http:request method="POST" doc:name="Anypoint - Add Assets to Exchange" doc:id="a518deac-64f4-4131-967e-2a08dd570b8e" config-ref="Anypoint_HTTP_Request" path="/exchange/api/v1/assets">
-			<http:headers><![CDATA[#[output application/java
+            </ee:variables>
+        </ee:transform>
+        <http:request method="POST" doc:name="Anypoint - Add Assets to Exchange" doc:id="a518deac-64f4-4131-967e-2a08dd570b8e" config-ref="Anypoint_HTTP_Request" path="/exchange/api/v1/assets">
+            <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.access_token
 }]]]></http:headers>
-		</http:request>
-					<http:request method="POST" doc:name="Anypoint - Add API to API Manager" doc:id="138f96a9-2e63-4f16-820c-1bd4da4b3608" config-ref="Anypoint_HTTP_Request" path='#["/apimanager/api/v1/organizations/" ++ vars.organizationId ++ "/environments/" ++ vars.environmentId ++ "/apis"]' target="api_id" targetValue="#[payload.id]">
-						<http:body ><![CDATA[#[output application/json
+        </http:request>
+        <http:request method="POST" doc:name="Anypoint - Add API to API Manager" doc:id="138f96a9-2e63-4f16-820c-1bd4da4b3608" config-ref="Anypoint_HTTP_Request" path="#[&quot;/apimanager/api/v1/organizations/&quot; ++ vars.organizationId ++ &quot;/environments/&quot; ++ vars.environmentId ++ &quot;/apis&quot;]" target="api_id" targetValue="#[payload.id]">
+            <http:body><![CDATA[#[output application/json
 ---
 {
    "endpoint":{
@@ -554,15 +432,15 @@ output application/java
       "version":"1.0.0"
    }
 }]]]></http:body>
-						<http:headers ><![CDATA[#[output application/java
+            <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.access_token,
 	"Content-Type" : "application/json"
 }]]]></http:headers>
-					</http:request>
-					<http:request method="POST" doc:name="Anypoint - Deploy API Proxy" doc:id="bab0e728-3da4-4bea-8645-d83b49df4f32" config-ref="Anypoint_HTTP_Request" path='#["/proxies/xapi/v1/organizations/" ++ vars.organizationId ++ "/environments/" ++ vars.environmentId ++ "/apis/" ++ vars.api_id ++ "/deployments"]'>
-						<http:body ><![CDATA[#[output application/json
+        </http:request>
+        <http:request method="POST" doc:name="Anypoint - Deploy API Proxy" doc:id="bab0e728-3da4-4bea-8645-d83b49df4f32" config-ref="Anypoint_HTTP_Request" path="#[&quot;/proxies/xapi/v1/organizations/&quot; ++ vars.organizationId ++ &quot;/environments/&quot; ++ vars.environmentId ++ &quot;/apis/&quot; ++ vars.api_id ++ &quot;/deployments&quot;]">
+            <http:body><![CDATA[#[output application/json
 ---
 {
    "applicationName":((vars.provision_data.hostname default "") splitBy(/[.\/]/))[0],
@@ -572,16 +450,16 @@ output application/java
    "environmentId":vars.environmentId,
    "environmentName":vars.provision_data.provision.options.apenvname
 }]]]></http:body>
-						<http:headers ><![CDATA[#[output application/java
+            <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.access_token,
 	"Content-Type" : "application/json"
 }]]]></http:headers>
-					</http:request>
-					<logger level="INFO" doc:name="Logger" doc:id="16d66d68-6426-4f18-84ca-bdb2497a0e4b" message="#[payload]"/>
-					<os:store doc:name="Store" doc:id="d56030af-25b2-4144-bfc6-a6816e193084" key="#[vars.provision_data.provision.uuid]">
-						<os:value ><![CDATA[#[%dw 2.0
+        </http:request>
+        <logger level="INFO" doc:name="Logger" doc:id="16d66d68-6426-4f18-84ca-bdb2497a0e4b" message="#[payload]" />
+        <os:store doc:name="Store" doc:id="d56030af-25b2-4144-bfc6-a6816e193084" key="#[vars.provision_data.provision.uuid]">
+            <os:value><![CDATA[#[%dw 2.0
 output application/json
 ---
 (vars.provision_data mapObject (value, key) -> {
@@ -591,20 +469,85 @@ output application/json
         (key): (value)
     })
 }) ++ {"api_id": vars.api_id, "herokuAppId": vars.provision_data.provision.name, "environmentId": vars.environmentId, "organizationId": vars.organizationId}]]]></os:value>
-					</os:store>
-		<http:request method="POST" doc:name="Provision" doc:id="bc4e5b64-3cea-4cb4-9c56-7b877907c726" config-ref="API_Heroku_HTTP_Request" path="/addons/{uuid}/actions/provision">
-				<http:headers><![CDATA[#[output application/java
+        </os:store>
+        <http:request method="POST" doc:name="Provision" doc:id="bc4e5b64-3cea-4cb4-9c56-7b877907c726" config-ref="API_Heroku_HTTP_Request" path="/addons/{uuid}/actions/provision">
+            <http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer " ++ vars.provision_data.accessToken,
 	"Accept" : "application/vnd.heroku+json; version=3",
 	"Content-Type" : "application/json"
 }]]]></http:headers>
-				<http:uri-params><![CDATA[#[output application/java
+            <http:uri-params><![CDATA[#[output application/java
 ---
 {
 	"uuid" : vars.provision_data.provision.uuid
 }]]]></http:uri-params>
-			</http:request>
+        </http:request>
+    </flow>
+    <flow name="post:\sso\login:heroku-provisioning-api-config">
+		<logger level="INFO" message="#[payload]" />
+		<set-payload value="#[output application/java --- payload]" doc:name="Set Payload" doc:id="53acb05e-e152-44f9-92b5-8359b0bec025" />
+		<ee:transform doc:name="Transform Message" doc:id="8a5c5eab-7530-4de4-9c95-38396d775688" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+import dw::Crypto
+output application/json
+
+var resource_id = payload.resource_id default ""
+var timestamp = payload.timestamp default ""
+
+---
+{ "token" : Crypto::SHA1((resource_id ++ ':' ++ p('heroku.sso_salt') ++ ':' ++ timestamp) as Binary) }
+]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="uuid" ><![CDATA[%dw 2.0
+output application/java
+---
+payload.resource_id default ""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<os:retrieve doc:name="Retrieve" doc:id="b709cf20-9cc1-4383-ab8d-d3873af34363" key="#[vars.uuid]">
+			<os:default-value ><![CDATA[{}]]></os:default-value>
+		</os:retrieve>
+		<http:request method="POST" doc:name="Anypoint - Get Access Token" doc:id="9cfef76c-1bad-4417-a1f5-9776d216e3c2" config-ref="Anypoint_HTTP_Request" path="/accounts/login" target="access_token" targetValue="#[payload.access_token]" followRedirects="true">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"username": payload.provision.options.apuser,
+	"password": payload.provision.options.appwd
+}]]]></http:body>
+                <http:headers><![CDATA[#[output application/java
+---
+{
+	"Content-Type" : "application/json"
+}]]]></http:headers>
+            </http:request>
+		<http:request method="POST" doc:name="Anypoint - Home" doc:id="2192b277-8316-40b0-817c-21b622509b50" path="/redirect" config-ref="HTTP_Request_configuration" followRedirects="true">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer " ++ vars.access_token,
+	"Content-Type" : "application/json"
+}]]]></http:headers>
+		</http:request>
+		
+		<set-variable value='#[{ "Location":"https://anypoint.mulesoft.com/home" }]' doc:name="Set Variable" doc:id="58927054-596a-4ff0-a0dd-7ed29a62c039" variableName="outboundHeaders"/>
+		<set-variable value="302" doc:name="Set Variable" doc:id="6b729c9a-af72-432b-884f-00e1e5535f26" variableName="httpStatus" />
+		<logger level="INFO" doc:name="Logger" doc:id="788595a8-340d-4032-86b6-2b438f57d32a" message="#[payload]"/>
+    </flow>
+	<flow name="heroku-provisioning-apiFlow1" doc:id="bb9a1607-7b58-499a-b67b-63c39ca7369c" >
+		<http:listener doc:name="Listener" doc:id="6c2ab46b-19c1-40f8-83ca-0754060d271e" config-ref="heroku-provisioning-api-httpListenerConfig" path="/store"/>
+		<os:store doc:name="Store" doc:id="d55b9e97-2e6e-4cb9-a3c0-7f58072c920e" key="#[attributes.queryParams.uuid]">
+			<os:value ><![CDATA[#[output application/json
+---
+payload]]]></os:value>
+		</os:store>
+	</flow>
+	<flow name="heroku-provisioning-apiFlow2" doc:id="e4bff908-8bed-46c8-8d95-b80adec75701" >
+		<http:listener doc:name="Listener" doc:id="178845f4-28e3-45ba-88d1-977a4c072220" config-ref="heroku-provisioning-api-httpListenerConfig" path="/redirect"/>
+		<logger level="INFO" doc:name="Logger" doc:id="9091f7d4-31af-4a27-a168-7e747d91aad8" message='#["Goodbye!"]'/>
 	</flow>
 </mule>

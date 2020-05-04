@@ -56,13 +56,6 @@
             <classifier>mule-plugin</classifier>
         </dependency>
     	<dependency>
-            <groupId>b85b361d-0842-4b70-af37-2723c2c3ae7e</groupId>
-            <artifactId>heroku-provisioning-api</artifactId>
-            <version>1.0.6</version>
-            <classifier>raml</classifier>
-            <type>zip</type>
-        </dependency>
-    	<dependency>
             <groupId>com.mulesoft.connectors</groupId>
             <artifactId>anypoint-mq-connector</artifactId>
             <version>3.1.0</version>
@@ -73,6 +66,13 @@
             <artifactId>mule-validation-module</artifactId>
             <version>1.4.0</version>
             <classifier>mule-plugin</classifier>
+        </dependency>
+    	<dependency>
+            <groupId>b85b361d-0842-4b70-af37-2723c2c3ae7e</groupId>
+            <artifactId>heroku-provisioning-api</artifactId>
+            <version>1.0.7</version>
+            <classifier>raml</classifier>
+            <type>zip</type>
         </dependency>
     </dependencies>
 
